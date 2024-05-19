@@ -156,20 +156,24 @@ function App() {
             }}
           >
             <Toolbar />
-            {/* <Typography variant="h4" marginBottom={2} textAlign="center">
+            <Typography variant="h4" marginBottom={2} textAlign="center">
               KANUN KUTUSU
-            </Typography> */}
+            </Typography>
 
             <List>
               {drawerItems.map((item) => (
-                <ListItem key={item.name} disablePadding>
+                <ListItem sx={{ marginTop: 1 }} key={item.name} disablePadding>
                   <ListItemButton
                     component={RouterLink}
                     to={item.path}
                     onClick={item.onClick}
                   >
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.name} />
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6">{item.name} </Typography>
+                      }
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}
@@ -243,7 +247,7 @@ function App() {
           <Route path="/signup" element={<Signup onSignup={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="/detail" element={<ProposalDetail />} />
+          <Route path="/carddetail/:id" element={<ProposalDetail />} />
         </Routes>
       </Box>
     </div>

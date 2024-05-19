@@ -21,6 +21,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import { red } from "@mui/material/colors";
+import { ProposalCard } from "./ProposalCard";
+import { ProposalDetail } from "./ProposalDetail";
 
 export const MainPage = () => {
   const [proposals, setProposals] = useState([]);
@@ -53,7 +55,14 @@ export const MainPage = () => {
             <Grid container direction="column" alignItems="center" spacing={4}>
               {proposals.map((item) => (
                 <Grid item xs={12} key={item.id} sx={{ minWidth: "100%" }}>
-                  <Card sx={{ maxWidth: "100%" }}>
+                  <ProposalCard
+                    id={item.id}
+                    user={item.user}
+                    image={item.image}
+                    title={item.title}
+                    description={item.description}
+                  />
+                  {/* <Card sx={{ maxWidth: "100%" }}>
                     <CardHeader
                       avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
                       action={
@@ -85,7 +94,7 @@ export const MainPage = () => {
                         <ShareIcon />
                       </IconButton>
                     </CardActions>
-                  </Card>
+                  </Card> */}
                 </Grid>
               ))}
             </Grid>
