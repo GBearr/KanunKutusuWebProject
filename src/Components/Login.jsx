@@ -16,6 +16,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import logo from "../assets/kanunkutusu_transparent.png";
 
 const onSubmit = async (values, actions) => {
   console.log("Form values:", values);
@@ -57,7 +58,17 @@ export const Login = () => {
           boxShadow: 3,
         }}
       >
-        <Typography variant="h4">KANUN KUTUSU</Typography>
+        <Box>
+          <img
+            src={logo}
+            alt="logo"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </Box>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
           <Stack spacing={3} width="100%">
             <TextField

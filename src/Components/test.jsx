@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Route,
   Routes,
   useLocation,
   Link as RouterLink,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
-import axios from "axios";
-import { debounce } from "lodash";
 import {
   Drawer,
   List,
@@ -21,6 +20,7 @@ import {
   useMediaQuery,
   useTheme,
   ListItemIcon,
+  Collapse,
   TextField,
   InputAdornment,
   ListItem,
@@ -29,7 +29,10 @@ import {
 } from "@mui/material";
 import {
   Search as SearchIcon,
+  ExpandLess,
+  ExpandMore,
   Home as HomeIcon,
+  Inbox as InboxIcon,
   Mail as MailIcon,
 } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -39,8 +42,6 @@ import { Signup } from "./Components/Signup";
 import { Login } from "./Components/Login";
 import { MainPage } from "./Components/MainPage";
 import { ProfileScreen } from "./Components/ProfileScreen";
-import logo from "./assets/kanunkutusu.png";
-import { ProposalDetail } from "./Components/ProposalDetail";
 
 const drawerWidth = 240;
 
@@ -51,25 +52,8 @@ function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
-  const [user, setUser] = useState({ name: "Murat Çetin" });
-  const [searchQuery, setSearchQuery] = useState("");
-  const [proposals, setProposals] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
-
-  useEffect(() => {
-    // JSON Server'dan tüm verileri çek
-    const fetchProposals = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/proposals");
-        setProposals(response.data);
-      } catch (error) {
-        console.error("Veriler çekilirken bir hata oluştu:", error);
-      }
-    };
-
-    fetchProposals();
-  }, []);
 
   const handleSearchDrawerToggle = () => {
     setSearchDrawerOpen(!searchDrawerOpen);
@@ -79,34 +63,13 @@ function App() {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    navigate("/");
+  const handleClick = () => {
+    setOpen(!open);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleNavigation = (path) => {
+    navigate(path);
   };
-
-  const debouncedSearch = useCallback(
-    debounce((query) => {
-      if (!query.trim()) {
-        setSearchResults([]); // Boş sorgu olduğunda sonuçları temizle
-        return;
-      }
-
-      const filteredResults = proposals.filter((proposal) =>
-        proposal.title.toLowerCase().includes(query.toLowerCase())
-      );
-
-      setSearchResults(filteredResults);
-    }, 300),
-    [proposals]
-  );
-
-  useEffect(() => {
-    debouncedSearch(searchQuery);
-  }, [searchQuery, debouncedSearch]);
 
   const drawerItems = [
     { name: "Ana Sayfa", path: "/", icon: <HomeIcon /> },
@@ -156,12 +119,12 @@ function App() {
             }}
           >
             <Toolbar />
-            {/* <Typography variant="h4" marginBottom={2} textAlign="center">
+            <Typography variant="h4" marginBottom={2} textAlign="center">
               KANUN KUTUSU
-            </Typography> */}
+            </Typography>
 
             <List>
-              {drawerItems.map((item) => (
+              {drawerItems.map((item, index) => (
                 <ListItem key={item.name} disablePadding>
                   <ListItemButton
                     component={RouterLink}
@@ -193,8 +156,6 @@ function App() {
           variant="outlined"
           placeholder="Ara..."
           fullWidth
-          value={searchQuery}
-          onChange={handleSearchChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -205,13 +166,6 @@ function App() {
             ),
           }}
         />
-        <List>
-          {searchResults.map((item) => (
-            <ListItem key={item.id}>
-              <ListItemText primary={item.title} />
-            </ListItem>
-          ))}
-        </List>
       </Drawer>
 
       <Box
@@ -225,25 +179,22 @@ function App() {
               : 0,
         }}
       >
-        {user && (
-          <Stack
-            direction={"row"}
-            sx={{ justifyContent: "flex-end", alignItems: "center" }}
-          >
-            <Button disableRipple onClick={() => navigate("/profile")}>
-              <Avatar alt="User Avatar" src="/static/images/avatar/1.jpg" />
-              <Typography marginLeft={"15px"} color={"white"} variant="h5">
-                {user.name}
-              </Typography>
-            </Button>
-          </Stack>
-        )}
+        <Stack
+          direction={"row"}
+          sx={{ justifyContent: "flex-end", alignItems: "center" }}
+        >
+          <Button disableRipple onClick={() => handleNavigation("/profile")}>
+            <Avatar alt="User Avatar" src="/static/images/avatar/1.jpg" />
+            <Typography marginLeft={"15px"} color={"white"} variant="h5">
+              Murat Çetin
+            </Typography>
+          </Button>
+        </Stack>
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/signup" element={<Signup onSignup={handleLogin} />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="/detail" element={<ProposalDetail />} />
         </Routes>
       </Box>
     </div>
