@@ -3,7 +3,7 @@
 ### Hakkımda
 - 💻 Web Geliştirici
 - 💬 Bana sormak istediğiniz bir şey olursa, çekinmeden iletişime geçebilirsiniz
-- 📫 Bana ulaşın: muhammedmuratc@gmail.com(mailto:muhammedmuratc@gmail.com)
+- 📫 Bana ulaşın: [muhammedmuratc@gmail.com](mailto:muhammedmuratc@gmail.com)
 
 ### Teknolojiler ve Araçlar
 - HTML, CSS, JavaScript, React
