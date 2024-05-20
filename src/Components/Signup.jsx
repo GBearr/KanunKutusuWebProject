@@ -19,6 +19,21 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const onSubmit = async (values, actions) => {
   console.log("Form values:", values);
+
+  const response = await fetch("http://localhost:3000/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  });
+
+  if (response.ok) {
+    console.log("User created successfully");
+  } else {
+    console.error("Error creating user");
+  }
+
   await new Promise((resolve) => setTimeout(resolve, 1000));
   actions.resetForm();
 };
@@ -66,7 +81,9 @@ export const Signup = () => {
           boxShadow: 3,
         }}
       >
-        <Typography variant="h4">KANUN KUTUSU</Typography>
+        <Typography variant="h4" textAlign={"center"}>
+          KANUN KUTUSU
+        </Typography>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
           <Stack spacing={3} width="100%">
             <Stack direction={"row"} spacing={3}>

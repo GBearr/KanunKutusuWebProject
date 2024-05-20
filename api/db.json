@@ -329,5 +329,15 @@
       "description": "Bu, vergi sisteminde değişiklikler öngören kanun teklifinin açıklamasıdır.",
       "image": "https://mui.com/static/images/cards/contemplative-reptile.jpg"
     }
+  ],
+  "users": [
+    {
+      "id": "70fb",
+      "firstName": "Muhammed Murat",
+      "lastName": "Çetin",
+      "email": "muhammedmuratc@gmail.com",
+      "password": "ku0pqPx5",
+      "confirmPassword": "ku0pqPx5"
+    }
   ]
 }
