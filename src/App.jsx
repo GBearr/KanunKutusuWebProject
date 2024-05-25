@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { debounce } from "lodash";
 import {
-  Drawer,
-  Toolbar,
+  useTheme,
+  useMediaQuery,
   Box,
   Stack,
   Typography,
-  IconButton,
-  useMediaQuery,
-  useTheme,
   Button,
   Avatar,
+  Drawer,
+  Toolbar,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Signup } from "./Components/Signup";
 import { Login } from "./Components/Login";
 import { MainPage } from "./Components/MainPage";
@@ -35,31 +31,29 @@ function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [proposals, setProposals] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    document.body.style.background =
-      "linear-gradient(to right, #697c88, #8a8e90)";
-    document.body.style.backgroundColor = "#517faf";
+    document.body.style.backgroundColor = "#f3f3f8";
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.background = "";
       document.body.style.backgroundColor = "";
+      document.body.style.margin = "";
+      document.body.style.padding = "";
+      document.body.style.overflow = "";
     };
   }, []);
 
   useEffect(() => {
-    const fetchProposals = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/proposals");
-        setProposals(response.data);
-      } catch (error) {
-        console.error("Veriler çekilirken bir hata oluştu:", error);
-      }
-    };
-
-    fetchProposals();
+    const storedUser = sessionStorage.getItem("currentUser");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   const handleSearchDrawerToggle = () => {
@@ -72,6 +66,8 @@ function App() {
 
   const handleLogin = (userData) => {
     console.log("User logged in:", userData);
+    sessionStorage.setItem("currentUser", JSON.stringify(userData)); // Kullanıcı bilgilerini sessionStorage'a kaydet
+    setUser(userData); // State'i güncelle
     navigate("/");
   };
 
@@ -79,25 +75,9 @@ function App() {
     setSearchQuery(event.target.value);
   };
 
-  const debouncedSearch = useCallback(
-    debounce((query) => {
-      if (!query.trim()) {
-        setSearchResults([]);
-        return;
-      }
-
-      const filteredResults = proposals.filter((proposal) =>
-        proposal.title.toLowerCase().includes(query.toLowerCase())
-      );
-
-      setSearchResults(filteredResults);
-    }, 300),
-    [proposals]
-  );
-
-  useEffect(() => {
-    debouncedSearch(searchQuery);
-  }, [searchQuery, debouncedSearch]);
+  const handleProfileClick = () => {
+    navigate(`/profile/${user?.id}`);
+  };
 
   return (
     <div className="App">
@@ -118,12 +98,10 @@ function App() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: isMobile ? drawerWidth : "20vw",
-              backgroundColor: "rgba(105, 124, 136, 0.1)",
-              background:
-                "linear-gradient(to right, rgba(105, 124, 136, 0.1), rgba(138, 142, 144, 0.1))",
+              backgroundColor: "#f3f3f8",
               backdropFilter: "blur(5px)",
-              color: "white",
-              borderRight: "1px solid #ccccc",
+              color: "black",
+              borderRight: "1px solid #f3f3f8",
             },
           }}
         >
@@ -155,11 +133,24 @@ function App() {
               : 0,
         }}
       >
+        {user && (
+          <Stack
+            direction={"row"}
+            sx={{ justifyContent: "flex-end", alignItems: "center", mb: 2 }}
+          >
+            <Button disableRipple onClick={handleProfileClick}>
+              <Avatar src={user.profile_image_url} alt="User Avatar" />
+              <Typography marginLeft={"15px"} color={"black"} variant="h5">
+                {user.first_name + " " + user.last_name}
+              </Typography>
+            </Button>
+          </Stack>
+        )}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+          <Route path="/profile/:id" element={<ProfileScreen />} />
           <Route path="/carddetail/:id" element={<ProposalDetail />} />
         </Routes>
       </Box>

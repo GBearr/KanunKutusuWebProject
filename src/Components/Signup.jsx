@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -55,6 +55,17 @@ export const Signup = () => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+  useEffect(() => {
+    // Stil değişikliklerini uygula
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      // Stil değişikliklerini geri al
+      document.body.style.margin = "";
+      document.body.style.padding = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   return (
     <Box

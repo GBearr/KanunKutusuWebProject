@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// Login.jsx
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -9,66 +10,81 @@ import {
   IconButton,
 } from "@mui/material";
 import { useFormik } from "formik";
-import * as Yup from "yup"; // Doğrulama şemasını form içinde tanımlayalım
+import * as Yup from "yup";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../services/AuthService";
+import CryptoJS from "crypto-js";
 
-// Doğrulama şemasını tanımlayalım
 const loginSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Geçerli bir email girin")
-    .required("Email gerekli"),
+  identifier: Yup.string().required("Email veya Kullanıcı Adı gerekli"),
   password: Yup.string().required("Parola gerekli"),
 });
 
-const onSubmit = async (values, actions, navigate) => {
-  console.log("Form values submitted:", values); // Debugging
+const onSubmit = async (values, actions, navigate, handleLogin) => {
+  console.log("Form values submitted:", values);
+
+  const hashedPassword = CryptoJS.SHA256(values.password).toString(
+    CryptoJS.enc.Hex
+  );
 
   try {
-    const response = await fetch("http://localhost:3000/users");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const users = await response.json();
-    console.log("Fetched users:", users); // Debugging
-
-    const user = users.find(
-      (user) => user.email === values.email && user.password === values.password
-    );
-
-    if (user) {
-      console.log("Login successful");
-      // alert("Login successful");
-      sessionStorage.setItem("user", JSON.stringify(user));
-      navigate("/"); // Yönlendirme işlemi
+    let currentUser;
+    if (values.identifier.includes("@")) {
+      // Email login
+      currentUser = await authService.signInWithEmailAdressAndPassword(
+        values.identifier,
+        hashedPassword
+      );
     } else {
-      console.error("Invalid email or password");
-      alert("Invalid email or password");
+      // Username login
+      currentUser = await authService.signInWithUsernameAndPassword(
+        values.identifier,
+        hashedPassword
+      );
     }
+
+    console.log("Login successful:", currentUser);
+    sessionStorage.setItem("currentUser", JSON.stringify(currentUser.toJSON()));
+    handleLogin(currentUser.toJSON());
+    navigate("/");
   } catch (error) {
-    console.error("Failed to fetch:", error);
-    alert("Failed to connect to the server. Please try again later.");
+    console.error("Login failed:", error);
+    alert("Invalid email/username or password");
   }
 
   actions.setSubmitting(false);
 };
 
-export const Login = () => {
+export const Login = ({ handleLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      identifier: "muratcetin",
+      password: "kürdümelhamdulillah",
     },
     validationSchema: loginSchema,
-    onSubmit: (values, actions) => onSubmit(values, actions, navigate),
+    onSubmit: (values, actions) =>
+      onSubmit(values, actions, navigate, handleLogin),
   });
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    // Stil değişikliklerini uygula
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      // Stil değişikliklerini geri al
+      document.body.style.margin = "";
+      document.body.style.padding = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   return (
     <Box
@@ -77,15 +93,13 @@ export const Login = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        maxWidth: "800px",
-        margin: "0 auto",
         padding: "2rem",
       }}
     >
       <Stack
         direction={"row"}
         sx={{
-          maxWidth: "100%",
+          maxWidth: "800px",
           width: "100%",
           backgroundColor: "white",
           p: 3,
@@ -94,22 +108,24 @@ export const Login = () => {
           boxShadow: 3,
         }}
       >
-        <Typography variant="h3" textAlign={"center"}>
+        <Typography variant="h3" textAlign={"center"} marginBottom={3}>
           KANUN KUTUSU
         </Typography>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
           <Stack spacing={3} width="100%">
             <TextField
               sx={{ width: "100%" }}
-              id="email"
-              name="email"
+              id="identifier"
+              name="identifier"
               label="Email veya Kullanıcı Adı"
               variant="outlined"
-              value={formik.values.email}
+              value={formik.values.identifier}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              error={
+                formik.touched.identifier && Boolean(formik.errors.identifier)
+              }
+              helperText={formik.touched.identifier && formik.errors.identifier}
             />
             <TextField
               sx={{ width: "100%" }}
@@ -155,3 +171,5 @@ export const Login = () => {
     </Box>
   );
 };
+
+export default Login;

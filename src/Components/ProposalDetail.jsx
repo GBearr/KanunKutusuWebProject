@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -9,40 +9,58 @@ import {
   CardHeader,
   Avatar,
   IconButton,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { red } from "@mui/material/colors";
 
 export const ProposalDetail = () => {
-  const { id } = useParams();
-  const [card, setCard] = useState(null);
+  const { state } = useLocation();
+  const card = state;
+  const navigate = useNavigate();
+  console.log(card);
+
+  const handleUserProfileClick = (id) => {
+    navigate(`/profile/${id}`);
+  };
 
   useEffect(() => {
-    // API'den kart detaylarını al
-    fetch(`http://localhost:3000/proposals/${id}`)
-      .then((response) => response.json())
-      .then((data) => setCard(data))
-      .catch((error) => console.error("Error fetching card details:", error));
-  }, [id]);
+    if (!card) {
+      navigate("/"); // Veya istediğiniz başka bir rota
+    }
+  }, [card, navigate]);
 
   if (!card) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
     <Container>
       <Card sx={{ maxWidth: "100%", mt: 4 }}>
         <CardHeader
-          avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
-          action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
+          sx={{ cursor: "pointer" }}
+          onClick={() => handleUserProfileClick(card.user_id)}
+          avatar={<Avatar src={card.user_image} />}
+          // action={
+          //   <IconButton aria-label="settings">
+          //     <MoreVertIcon />
+          //   </IconButton>
+          // }
+          title={
+            <Typography gutterBottom variant="h5" component="div">
+              {card.title}
+            </Typography>
           }
-          title={card.user}
-          subheader="date"
+          subheader={card.date}
         />
-        <CardMedia component={"img"} height={194} image={card.image} />
+        {card.image && (
+          <CardMedia component={"img"} height={194} image={card.image} />
+        )}
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {card.title}
@@ -55,3 +73,5 @@ export const ProposalDetail = () => {
     </Container>
   );
 };
+
+export default ProposalDetail;
