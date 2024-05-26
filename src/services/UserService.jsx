@@ -7,7 +7,6 @@ export const userService = {
       p_user_id,
     });
     if (error) console.error(error);
-    else console.log("UserService", data);
     return User.fromJSON(data[0]);
   },
 };

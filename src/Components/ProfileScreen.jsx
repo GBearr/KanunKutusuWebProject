@@ -29,7 +29,6 @@ export const ProfileScreen = () => {
       try {
         const fetchedUser = await userService.getUsers(id);
         setUser(fetchedUser);
-        console.log("ProfileScreen", fetchedUser);
       } catch (error) {
         console.error("Kullanıcı çekme hatası:", error);
       }
@@ -55,7 +54,6 @@ export const ProfileScreen = () => {
             fetchedPosts = [];
         }
         setPostOfUser(fetchedPosts);
-        console.log("ProfileScreenPost", fetchedPosts);
       } catch (error) {
         console.error("Post çekme hatası:", error);
       }
@@ -124,6 +122,7 @@ export const ProfileScreen = () => {
                     support={item.supportCount}
                     state={item.state}
                     user_id={item.userId}
+                    comment={item.commentCount}
                   />
                 </Grid>
               ))}

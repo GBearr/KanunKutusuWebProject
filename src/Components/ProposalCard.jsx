@@ -11,23 +11,12 @@ import {
   IconButton,
   CardHeader,
   Avatar,
-  Badge,
-  styled,
 } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ShareIcon from "@mui/icons-material/Share";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { red } from "@mui/material/colors";
-import { Settings } from "@mui/icons-material";
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    right: -5,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: "0 4px",
-  },
-}));
+import ModeCommentIcon from "@mui/icons-material/ModeComment";
+import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
 
 export const ProposalCard = ({
   id,
@@ -39,6 +28,7 @@ export const ProposalCard = ({
   support,
   state,
   user_id,
+  comment,
 }) => {
   const navigate = useNavigate();
 
@@ -54,6 +44,7 @@ export const ProposalCard = ({
         support,
         state,
         user_id,
+        comment,
       },
     });
   };
@@ -88,14 +79,14 @@ export const ProposalCard = ({
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <StyledBadge badgeContent={support} color="secondary">
-            <ThumbUpIcon />
-          </StyledBadge>
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
+        <Button color="inherit">
+          <ThumbUpAltOutlinedIcon sx={{ mr: 1 }} />
+          {support}
+        </Button>
+        <Button color="inherit">
+          <ModeCommentOutlinedIcon sx={{ mr: 1 }} />
+          {comment}
+        </Button>
       </CardActions>
     </Card>
   );

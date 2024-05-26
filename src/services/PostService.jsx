@@ -83,4 +83,19 @@ export const postService = {
       return data.map((item) => Post.fromJSON(item));
     }
   },
+
+  createPost: async ({ p_user_id, p_title, p_content, p_image_url }) => {
+    let { data, error } = await supabase.rpc("insert_post", {
+      p_user_id,
+      p_title,
+      p_content,
+      p_image_url,
+    });
+    if (error) {
+      console.error("Fonksiyon çağrısı hatası:", error);
+      return [];
+    } else {
+      return data;
+    }
+  },
 };

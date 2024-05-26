@@ -1,51 +1,81 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   Grid,
   Box,
   Tabs,
   Tab,
-  Button,
-  Avatar,
-  Typography,
-  Stack,
+  CircularProgress,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { ProposalCard } from "./ProposalCard";
 import { postService } from "../services/PostService";
 
 export const MainPage = () => {
   const [proposals, setProposals] = useState([]);
+  const [page, setPage] = useState(1);
   const [user, setUser] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-
-  console.log(proposals);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("currentUser");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      console.log(JSON.parse(storedUser));
     }
   }, []);
 
   useEffect(() => {
     const fetchProposals = async () => {
-      let data;
-      if (tabValue === 0) {
-        data = await postService.getNewPosts(1, user?.id || null);
-      } else {
-        data = await postService.getPopularPosts(1, user?.id || null);
+      setLoading(true);
+      try {
+        let data;
+        if (tabValue === 0) {
+          data = await postService.getNewPosts(page, user?.id || null);
+        } else {
+          data = await postService.getPopularPosts(page, user?.id || null);
+        }
+
+        // Verinin doğru yapıda olduğundan emin olun
+        if (data && Array.isArray(data)) {
+          setProposals((prevProposals) => [...prevProposals, ...data]);
+          setHasMore(data.length > 0);
+        } else {
+          throw new Error("Beklenmeyen veri yapısı");
+        }
+      } catch (error) {
+        console.error("Veri getirme hatası:", error);
+        setHasMore(false); // Hata durumunda daha fazla veri olmadığını varsayın
       }
-      setProposals(data);
+      setLoading(false);
     };
 
-    fetchProposals();
-  }, [tabValue, user]);
+    if (user) {
+      fetchProposals();
+    }
+  }, [tabValue, page, user]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    setPage(1); // Sekme değiştirildiğinde sayfayı sıfırla
+    setProposals([]); // Sekme değiştirildiğinde mevcut veriyi temizle
   };
+
+  const lastProposalElementRef = useRef();
+
+  useEffect(() => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    });
+    if (lastProposalElementRef.current) {
+      observer.current.observe(lastProposalElementRef.current);
+    }
+  }, [loading, hasMore]);
 
   return (
     <>
@@ -59,8 +89,18 @@ export const MainPage = () => {
         <Grid container justifyContent="center">
           <Grid item xs={12} md={8}>
             <Grid container direction="column" alignItems="center" spacing={4}>
-              {proposals.map((item) => (
-                <Grid item xs={12} key={item.id} sx={{ minWidth: "100%" }}>
+              {proposals.map((item, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  key={item.id}
+                  sx={{ minWidth: "100%" }}
+                  ref={
+                    proposals.length === index + 1
+                      ? lastProposalElementRef
+                      : null
+                  }
+                >
                   <ProposalCard
                     id={item.id}
                     user_image={item.profileImageUrl}
@@ -71,10 +111,16 @@ export const MainPage = () => {
                     support={item.supportCount}
                     state={item.state}
                     user_id={item.userId}
+                    comment={item.commentCount}
                   />
                 </Grid>
               ))}
             </Grid>
+            {loading && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <CircularProgress />
+              </Box>
+            )}
           </Grid>
         </Grid>
       </Container>

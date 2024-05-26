@@ -10,15 +10,21 @@ import {
   Avatar,
   Drawer,
   Toolbar,
+  Card,
+  CardMedia,
+  CardContent,
+  CardHeader,
 } from "@mui/material";
 import { Signup } from "./Components/Signup";
 import { Login } from "./Components/Login";
 import { MainPage } from "./Components/MainPage";
 import { ProfileScreen } from "./Components/ProfileScreen";
 import { ProposalDetail } from "./Components/ProposalDetail";
+import { ProposalCreate } from "./Components/ProposalCreate";
 import DrawerItems from "./Components/DrawerItems";
 import SearchDrawer from "./Components/SearchDrawer";
 import AppBar from "./Components/AppBar";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const drawerWidth = 240;
 
@@ -33,21 +39,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState(null);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false); // New state for the right drawer
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#f3f3f8";
-    document.body.style.margin = "0";
-    document.body.style.padding = "0";
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.background = "";
-      document.body.style.backgroundColor = "";
-      document.body.style.margin = "";
-      document.body.style.padding = "";
-      document.body.style.overflow = "";
-    };
-  }, []);
+  document.body.style.backgroundColor = "#f3f3f8";
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem("currentUser");
@@ -62,6 +56,10 @@ function App() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleRightDrawerToggle = () => {
+    setRightDrawerOpen(!rightDrawerOpen);
   };
 
   const handleLogin = (userData) => {
@@ -114,6 +112,58 @@ function App() {
         </Drawer>
       )}
 
+      {user && (
+        <Drawer
+          anchor="right"
+          variant={isMobile ? "temporary" : "permanent"}
+          open={rightDrawerOpen}
+          onClose={handleRightDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: "block", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: isMobile ? drawerWidth : "20vw",
+              backgroundColor: "#f3f3f8",
+              backdropFilter: "blur(5px)",
+              color: "black",
+              borderLeft: "1px solid #f3f3f8",
+            },
+          }}
+        >
+          <Toolbar />
+          <Stack
+            direction={"column"}
+            sx={{ justifyContent: "flex-end", alignItems: "center", mb: 2 }}
+          >
+            <Button
+              fullWidth
+              sx={{ mb: 5 }}
+              onClick={() => navigate("/proposalcreate")}
+            >
+              {" "}
+              <AddCircleIcon />{" "}
+              <Typography variant="h6">Teklif Oluştur</Typography>
+            </Button>
+            <Card
+              onClick={handleProfileClick}
+              sx={{ cursor: "pointer", marginRight: "32px" }}
+            >
+              <CardMedia component={"img"} image={user.profile_image_url} />
+              <CardHeader
+                subheader={
+                  <Typography variant="h5" marginBottom={1}>
+                    {user.first_name + " " + user.last_name}
+                  </Typography>
+                }
+              />
+            </Card>
+          </Stack>
+        </Drawer>
+      )}
+
       <SearchDrawer
         open={searchDrawerOpen}
         onClose={handleSearchDrawerToggle}
@@ -131,27 +181,19 @@ function App() {
             !hideAppBarOnPaths.includes(location.pathname) && !isMobile
               ? "20vw"
               : 0,
+          mr:
+            !hideAppBarOnPaths.includes(location.pathname) && !isMobile
+              ? "20vw"
+              : 0,
         }}
       >
-        {user && (
-          <Stack
-            direction={"row"}
-            sx={{ justifyContent: "flex-end", alignItems: "center", mb: 2 }}
-          >
-            <Button disableRipple onClick={handleProfileClick}>
-              <Avatar src={user.profile_image_url} alt="User Avatar" />
-              <Typography marginLeft={"15px"} color={"black"} variant="h5">
-                {user.first_name + " " + user.last_name}
-              </Typography>
-            </Button>
-          </Stack>
-        )}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login handleLogin={handleLogin} />} />
           <Route path="/profile/:id" element={<ProfileScreen />} />
           <Route path="/carddetail/:id" element={<ProposalDetail />} />
+          <Route path="/proposalcreate" element={<ProposalCreate />} />
         </Routes>
       </Box>
     </div>
