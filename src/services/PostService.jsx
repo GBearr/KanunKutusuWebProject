@@ -28,6 +28,45 @@ export const postService = {
     }
   },
 
+  getApprovedPosts: async (p_page, p_viewer_id) => {
+    let { data, error } = await supabase.rpc("get_approved_posts", {
+      p_page,
+      p_viewer_id,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      return data.map((item) => Post.fromJSON(item));
+    }
+  },
+
+  getPendingPosts: async (p_page, p_viewer_id) => {
+    let { data, error } = await supabase.rpc("get_pending_posts", {
+      p_page,
+      p_viewer_id,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      return data.map((item) => Post.fromJSON(item));
+    }
+  },
+
+  getRejectedPosts: async (p_page, p_viewer_id) => {
+    let { data, error } = await supabase.rpc("get_rejected_posts", {
+      p_page,
+      p_viewer_id,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      return data.map((item) => Post.fromJSON(item));
+    }
+  },
+
   getPostsOfUser: async (p_page, p_user_id, p_viewer_id) => {
     let { data, error } = await supabase.rpc("get_posts_of_user", {
       p_page,

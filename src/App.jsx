@@ -25,6 +25,7 @@ import DrawerItems from "./Components/DrawerItems";
 import SearchDrawer from "./Components/SearchDrawer";
 import AppBar from "./Components/AppBar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { ProposalState } from "./Components/ProposalState";
 
 const drawerWidth = 240;
 
@@ -148,17 +149,31 @@ function App() {
               <Typography variant="h6">Teklif Oluştur</Typography>
             </Button>
             <Card
+              variant="outlined"
               onClick={handleProfileClick}
-              sx={{ cursor: "pointer", marginRight: "32px" }}
+              sx={{
+                cursor: "pointer",
+                textAlign: "center",
+                border: "none",
+              }}
             >
-              <CardMedia component={"img"} image={user.profile_image_url} />
-              <CardHeader
-                subheader={
-                  <Typography variant="h5" marginBottom={1}>
-                    {user.first_name + " " + user.last_name}
-                  </Typography>
-                }
-              />
+              <Stack sx={{ alignItems: "center" }}>
+                <Avatar
+                  sx={{
+                    mt: 2,
+                    width: { xs: 100, sm: 150, md: 200 },
+                    height: { xs: 100, sm: 150, md: 200 },
+                  }}
+                  src={user.profile_image_url}
+                />
+                <CardHeader
+                  subheader={
+                    <Typography sx={{ mt: 2 }} variant="h5" marginBottom={1}>
+                      {user.first_name + " " + user.last_name}
+                    </Typography>
+                  }
+                />
+              </Stack>
             </Card>
           </Stack>
         </Drawer>
@@ -194,6 +209,7 @@ function App() {
           <Route path="/profile/:id" element={<ProfileScreen />} />
           <Route path="/carddetail/:id" element={<ProposalDetail />} />
           <Route path="/proposalcreate" element={<ProposalCreate />} />
+          <Route path="/proposalstate/:id" element={<ProposalState />} />
         </Routes>
       </Box>
     </div>

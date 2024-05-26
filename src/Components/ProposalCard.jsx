@@ -71,10 +71,19 @@ export const ProposalCard = ({
         subheader={date}
       />
       {image ? (
-        <CardMedia component={"img"} height={194} image={image} />
+        <CardMedia component={"img"} height={"100%"} image={image} />
       ) : null}
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          sx={{
+            display: "-webkit-box",
+            overflow: "hidden",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: 3,
+          }}
+          variant="body2"
+          color="text.secondary"
+        >
           {description}
         </Typography>
       </CardContent>

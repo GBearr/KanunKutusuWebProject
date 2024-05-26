@@ -42,17 +42,19 @@ const DrawerItems = ({ handleSearchDrawerToggle }) => {
     // { name: "Kayıt Ol", path: "/signup", icon: <MailIcon /> },
     {
       name: "Bekleyen Öneriler",
-      path: "/",
+      path: `/proposalstate/${1}`,
       icon: <HourglassEmptyIcon fontSize="large" />,
     },
     {
       name: "Onaylanan Öneriler",
-      path: "/",
+      path: `/proposalstate/${2}`,
+
       icon: <CheckCircleIcon fontSize="large" />,
     },
     {
       name: "Reddedilen Öneriler",
-      path: "/",
+      path: `/proposalstate/${3}`,
+
       icon: <CancelIcon fontSize="large" />,
     },
   ];
