@@ -34,7 +34,6 @@ const DrawerItems = ({ handleSearchDrawerToggle }) => {
     { name: "Ana Sayfa", path: "/", icon: <HomeIcon fontSize="large" /> },
     {
       name: "Ara",
-      path: "/",
       icon: <SearchIcon fontSize="large" />,
       onClick: handleSearchDrawerToggle,
     },

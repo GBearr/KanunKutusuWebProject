@@ -9,6 +9,7 @@ import {
   ListItemText,
   IconButton,
   ListItemButton,
+  Avatar,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -21,8 +22,14 @@ const SearchDrawer = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleClick = (id) => {
-    navigate(`/carddetail/${id}`);
+  const handleClick = (item) => {
+    if (item.type === "post") {
+      navigate(`/carddetail/${item.id}`, {
+        state: { post: item },
+      });
+    } else if (item.type === "user") {
+      navigate(`/profile/${item.id}`);
+    }
   };
 
   return (
@@ -54,10 +61,15 @@ const SearchDrawer = ({
         }}
       />
       <List>
-        {searchResults.map((item) => (
-          <ListItem key={item.id}>
-            <ListItemButton onClick={() => handleClick(item.id)}>
-              <ListItemText primary={item.title} />
+        {searchResults.map((item, index) => (
+          <ListItem key={index}>
+            <ListItemButton onClick={() => handleClick(item)}>
+              {item.profileImageUrl ? (
+                <Avatar sx={{ mr: 1 }} src={item.profileImageUrl} />
+              ) : null}
+              <ListItemText
+                primary={item.title || `${item.firstName} ${item.lastName}`}
+              />
             </ListItemButton>
           </ListItem>
         ))}

@@ -137,4 +137,17 @@ export const postService = {
       return data;
     }
   },
+
+  searchPosts: async (p_viewer_id, search_text) => {
+    let { data, error } = await supabase.rpc("search_posts", {
+      p_viewer_id,
+      search_text,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      return data.map((item) => Post.fromJSON(item));
+    }
+  },
 };

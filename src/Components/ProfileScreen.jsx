@@ -112,18 +112,7 @@ export const ProfileScreen = () => {
             <Grid container direction="column" alignItems="center" spacing={4}>
               {postOfUser.map((item) => (
                 <Grid item xs={12} key={item.id} sx={{ minWidth: "100%" }}>
-                  <ProposalCard
-                    id={item.id}
-                    user_image={item.profileImageUrl}
-                    image={item.imageUrl}
-                    title={item.title}
-                    description={item.content}
-                    date={item.timesAgo}
-                    support={item.supportCount}
-                    state={item.state}
-                    user_id={item.userId}
-                    comment={item.commentCount}
-                  />
+                  <ProposalCard post={item} />
                 </Grid>
               ))}
             </Grid>

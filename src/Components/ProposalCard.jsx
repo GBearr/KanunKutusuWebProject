@@ -17,37 +17,21 @@ import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
+import Post from "../Models/postModel";
 
-export const ProposalCard = ({
-  id,
-  user_image,
-  date,
-  image,
-  title,
-  description,
-  support,
-  state,
-  user_id,
-  comment,
-}) => {
+export const ProposalCard = ({ post }) => {
   const navigate = useNavigate();
 
+  console.log(post);
+
   const handleClick = () => {
-    navigate(`/carddetail/${id}`, {
+    navigate(`/carddetail/${post.id}`, {
       state: {
-        id,
-        user_image,
-        date,
-        image,
-        title,
-        description,
-        support,
-        state,
-        user_id,
-        comment,
+        post: post,
       },
     });
   };
+  console.log("post:", post);
 
   return (
     <Card
@@ -57,7 +41,7 @@ export const ProposalCard = ({
       variant="outlined"
     >
       <CardHeader
-        avatar={<Avatar src={user_image} />}
+        avatar={<Avatar src={post.profileImageUrl} />}
         action={
           <IconButton aria-label="settings">
             <MoreVertIcon />
@@ -65,13 +49,13 @@ export const ProposalCard = ({
         }
         title={
           <Typography gutterBottom variant="h5" component="div">
-            {title}
+            {post.title}
           </Typography>
         }
-        subheader={date}
+        subheader={post.date}
       />
-      {image ? (
-        <CardMedia component={"img"} height={"100%"} image={image} />
+      {post.imageUrl ? (
+        <CardMedia component={"img"} height={"100%"} image={post.imageUrl} />
       ) : null}
       <CardContent>
         <Typography
@@ -84,17 +68,17 @@ export const ProposalCard = ({
           variant="body2"
           color="text.secondary"
         >
-          {description}
+          {post.content}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <Button color="inherit">
           <ThumbUpAltOutlinedIcon sx={{ mr: 1 }} />
-          {support}
+          {post.supportCount}
         </Button>
         <Button color="inherit">
           <ModeCommentOutlinedIcon sx={{ mr: 1 }} />
-          {comment}
+          {post.commentCount}
         </Button>
       </CardActions>
     </Card>

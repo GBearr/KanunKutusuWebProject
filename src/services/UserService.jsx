@@ -9,4 +9,16 @@ export const userService = {
     if (error) console.error(error);
     return User.fromJSON(data[0]);
   },
+
+  searchUsers: async (search_text) => {
+    let { data, error } = await supabase.rpc("search_users", {
+      search_text,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      return data.map((item) => User.fromJSON(item));
+    }
+  },
 };

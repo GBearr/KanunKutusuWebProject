@@ -52,7 +52,7 @@ export const ProposalDetail = () => {
     try {
       const fetchedComments = await commentService.getCommentsofPost(
         pageNum,
-        card.id
+        card.post.id
       );
       setComments((prevComments) => [...prevComments, ...fetchedComments]);
       setHasMore(fetchedComments.length > 0);
@@ -69,7 +69,7 @@ export const ProposalDetail = () => {
     try {
       const newComment = await commentService.insertComment(
         comment,
-        card.id,
+        card.post.id,
         user.id // Kullanıcı kimliğini ekliyoruz
       );
       if (newComment) {
@@ -87,11 +87,11 @@ export const ProposalDetail = () => {
     }
   }, [card, page]);
 
-  useEffect(() => {
-    if (!card) {
-      navigate("/"); // Veya istediğiniz başka bir rota
-    }
-  }, [card, navigate]);
+  // useEffect(() => {
+  //   if (!card) {
+  //     navigate("/"); // Veya istediğiniz başka bir rota
+  //   }
+  // }, [card, navigate]);
 
   useEffect(() => {
     if (loading) return;
@@ -120,24 +120,24 @@ export const ProposalDetail = () => {
         <CardHeader
           avatar={
             <Avatar
-              src={card.user_image}
-              onClick={() => handleUserProfileClick(card.user_id)}
+              src={card.post.profileImageUrl}
+              onClick={() => handleUserProfileClick(card.post.userId)}
               sx={{ cursor: "pointer" }}
             />
           }
           title={
             <Typography gutterBottom variant="h5" component="div">
-              {card.title}
+              {card.post.title}
             </Typography>
           }
-          subheader={card.date}
+          subheader={card.post.date}
         />
-        {card.image && (
-          <CardMedia component={"img"} height={194} image={card.image} />
+        {card.post.image && (
+          <CardMedia component={"img"} height={194} image={card.post.image} />
         )}
         <CardContent>
           <Typography variant="body1" color="text.secondary">
-            {card.description}
+            {card.post.content}
           </Typography>
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6">Yorumlar</Typography>

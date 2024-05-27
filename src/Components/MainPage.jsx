@@ -56,8 +56,6 @@ export const MainPage = () => {
     }
   }, [tabValue, page, user]);
 
-  console.log("Proposals:", proposals);
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     setPage(1); // Sekme değiştirildiğinde sayfayı sıfırla
@@ -78,6 +76,7 @@ export const MainPage = () => {
       observer.current.observe(lastProposalElementRef.current);
     }
   }, [loading, hasMore]);
+  console.log(proposals);
 
   return (
     <>
@@ -103,18 +102,7 @@ export const MainPage = () => {
                       : null
                   }
                 >
-                  <ProposalCard
-                    id={item.id}
-                    user_image={item.profileImageUrl}
-                    image={item.imageUrl}
-                    title={item.title}
-                    description={item.content}
-                    date={item.timesAgo}
-                    support={item.supportCount}
-                    state={item.state}
-                    user_id={item.userId}
-                    comment={item.commentCount}
-                  />
+                  <ProposalCard post={item} />
                 </Grid>
               ))}
             </Grid>
