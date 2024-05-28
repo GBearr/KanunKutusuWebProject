@@ -150,4 +150,18 @@ export const postService = {
       return data.map((item) => Post.fromJSON(item));
     }
   },
+
+  support: async (p_user_id, p_post_id) => {
+    let { data, error } = await supabase.rpc("support", {
+      p_user_id,
+      p_post_id,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      console.log(data);
+      return data;
+    }
+  },
 };

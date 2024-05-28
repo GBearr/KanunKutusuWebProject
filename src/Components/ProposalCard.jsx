@@ -1,5 +1,4 @@
-// KanunCard.js
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -15,14 +14,15 @@ import {
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import ModeCommentOutlinedIcon from "@mui/icons-material/ModeCommentOutlined";
-import Post from "../Models/postModel";
+import { postService } from "../services/PostService";
 
 export const ProposalCard = ({ post }) => {
   const navigate = useNavigate();
+  const [isSupported, setIsSupported] = useState(post.isSupported);
+  const [supportCount, setSupportCount] = useState(post.supportCount);
 
-  console.log(post);
+  const userId = JSON.parse(sessionStorage.getItem("currentUser")).id;
 
   const handleClick = () => {
     navigate(`/carddetail/${post.id}`, {
@@ -31,16 +31,23 @@ export const ProposalCard = ({ post }) => {
       },
     });
   };
-  console.log("post:", post);
+
+  const handleSupportClick = async () => {
+    const result = await postService.support(userId, post.id);
+    if (result.length > 0) {
+      setIsSupported(result[0].is_supported);
+      setSupportCount(result[0].support_count);
+    }
+  };
 
   return (
     <Card
       sx={{ maxWidth: "100%", border: "none", borderRadius: "16px" }}
-      onClick={handleClick}
       style={{ cursor: "pointer" }}
       variant="outlined"
     >
       <CardHeader
+        onClick={handleClick}
         avatar={<Avatar src={post.profileImageUrl} />}
         action={
           <IconButton aria-label="settings">
@@ -57,7 +64,8 @@ export const ProposalCard = ({ post }) => {
       {post.imageUrl ? (
         <CardMedia component={"img"} height={"100%"} image={post.imageUrl} />
       ) : null}
-      <CardContent>
+
+      <CardContent onClick={handleClick}>
         <Typography
           sx={{
             display: "-webkit-box",
@@ -72,9 +80,13 @@ export const ProposalCard = ({ post }) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Button color="inherit">
-          <ThumbUpAltOutlinedIcon sx={{ mr: 1 }} />
-          {post.supportCount}
+        <Button color="inherit" onClick={handleSupportClick}>
+          {isSupported ? (
+            <ThumbUpIcon sx={{ mr: 1 }} />
+          ) : (
+            <ThumbUpAltOutlinedIcon sx={{ mr: 1 }} />
+          )}
+          {supportCount}
         </Button>
         <Button color="inherit">
           <ModeCommentOutlinedIcon sx={{ mr: 1 }} />
