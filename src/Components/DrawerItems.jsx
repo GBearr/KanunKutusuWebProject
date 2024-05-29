@@ -84,6 +84,10 @@ const DrawerItems = ({ handleSearchDrawerToggle }) => {
                     <Typography
                       sx={{
                         fontSize: "100%",
+                        display: "-webkit-box",
+                        overflow: "hidden",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 1,
                       }}
                       variant="h6"
                     >

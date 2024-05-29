@@ -1,37 +1,23 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import {
-  useTheme,
-  useMediaQuery,
-  Box,
-  Stack,
-  Typography,
-  Button,
-  Avatar,
-  Drawer,
-  Toolbar,
-  Card,
-  CardHeader,
-  Divider,
-  createTheme,
-} from "@mui/material";
+import { useMediaQuery, Box } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { Signup } from "./Components/Signup";
 import { Login } from "./Components/Login";
 import { MainPage } from "./Components/MainPage";
 import { ProfileScreen } from "./Components/ProfileScreen";
 import { ProposalDetail } from "./Components/ProposalDetail";
 import { ProposalCreate } from "./Components/ProposalCreate";
-import DrawerItems from "./Components/DrawerItems";
-import SearchDrawer from "./Components/SearchDrawer";
-import AppBar from "./Components/AppBar";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { ProposalState } from "./Components/ProposalState";
-import { postService } from "./services/PostService";
-import { userService } from "./services/UserService";
+import ProposalState from "./Components/ProposalState";
 import ErrorBoundary from "./Components/ErrorBoundary";
 import AdminLogin from "./Components/AdminLogin";
 import AdminPanel from "./Components/AdminPanel";
-import logo from "../src/assets/logo.svg";
+import DrawerMenu from "./Components/DrawerMenu";
+import RightDrawer from "./Components/RightDrawer";
+import SearchDrawer from "./Components/SearchDrawer";
+import AppBarComponent from "./Components/AppBarComponent";
+import { postService } from "./services/PostService";
+import { userService } from "./services/UserService";
 
 const theme = createTheme({
   breakpoints: {
@@ -39,7 +25,7 @@ const theme = createTheme({
       xs: 0,
       sm: 600,
       md: 900,
-      mdlg: 1100,
+      mdlg: 1000,
       lg: 1200,
       xl: 1536,
     },
@@ -59,9 +45,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
   const searchTimeoutRef = useRef(null);
-  console.log(isMd);
-  const drawerWidth = isMd ? 240 : 340;
 
+  const drawerWidth = isMdLG ? "20%" : "20%";
   document.body.style.backgroundColor = "#f3f3f8";
 
   useEffect(() => {
@@ -115,117 +100,29 @@ function App() {
     [user]
   );
 
-  const handleProfileClick = () => {
-    navigate(`/profile/${user?.id}`);
-  };
-
   return (
     <ErrorBoundary>
       <div className="App">
-        {isMdLG && <AppBar handleDrawerToggle={handleDrawerToggle} />}
+        {isMdLG && <AppBarComponent handleDrawerToggle={handleDrawerToggle} />}
 
-        {!hideAppBarOnPaths.includes(location.pathname) && (
-          <Drawer
-            variant={isMd ? "temporary" : "permanent"}
-            open={isMd ? mobileOpen : true}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            sx={{
-              display: { xs: "block", sm: "block" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-                backgroundColor: "#f3f3f8",
-                backdropFilter: "blur(5px)",
-                color: "black",
-              },
-            }}
-          >
-            <Toolbar />
-            <img style={{ alignSelf: "center", width: "50%" }} src={logo} />
-            <Divider sx={{ mt: 2 }} />
-            <DrawerItems handleSearchDrawerToggle={handleSearchDrawerToggle} />
-          </Drawer>
-        )}
-
-        {user && !hideAppBarOnPaths.includes(location.pathname) && (
-          <Drawer
-            anchor="right"
-            variant={isMd ? "temporary" : "permanent"}
-            open={rightDrawerOpen}
-            onClose={handleRightDrawerToggle}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            sx={{
-              display: { xs: "block", sm: "block" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-                backgroundColor: "#f3f3f8",
-                backdropFilter: "blur(5px)",
-                color: "black",
-                borderLeft: "1px solid #f3f3f8",
-              },
-            }}
-          >
-            <Toolbar />
-            <Stack
-              direction={"column"}
-              sx={{
-                marginRight: "10%",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                mb: 2,
-              }}
-            >
-              <Button
-                fullWidth
-                sx={{ mb: 5 }}
-                onClick={() => navigate("/proposalcreate")}
-              >
-                <AddCircleIcon />
-                <Typography variant="h6">Teklif Oluştur</Typography>
-              </Button>
-              <Card
-                variant="outlined"
-                onClick={handleProfileClick}
-                sx={{
-                  borderRadius: "16px",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  border: "none",
-                }}
-              >
-                <Stack sx={{ alignItems: "center" }}>
-                  <Avatar
-                    sx={{
-                      mt: 2,
-                      borderRadius: "50%",
-                      width: { xs: 100, sm: 150, md: 200 },
-                      height: { xs: 100, sm: 150, md: 200 },
-                    }}
-                    src={user.profile_image_url}
-                  />
-                  <CardHeader
-                    subheader={
-                      <>
-                        <Typography sx={{ mt: 2, color: "black" }} variant="h5">
-                          {user.first_name + " " + user.last_name}
-                        </Typography>
-                        <Typography variant="subtitle1">
-                          {user.profile_description}
-                        </Typography>
-                      </>
-                    }
-                  />
-                </Stack>
-              </Card>
-            </Stack>
-          </Drawer>
-        )}
+        {!hideAppBarOnPaths.includes(location.pathname) ? (
+          <>
+            <DrawerMenu
+              isMdLG={isMdLG}
+              mobileOpen={mobileOpen}
+              handleDrawerToggle={handleDrawerToggle}
+              drawerWidth={drawerWidth}
+              handleSearchDrawerToggle={handleSearchDrawerToggle}
+            />
+            <RightDrawer
+              // user={user}
+              isMdLG={isMdLG}
+              rightDrawerOpen={rightDrawerOpen}
+              handleRightDrawerToggle={handleRightDrawerToggle}
+              drawerWidth={drawerWidth}
+            />
+          </>
+        ) : null}
 
         <SearchDrawer
           open={searchDrawerOpen}
@@ -239,15 +136,16 @@ function App() {
           component="main"
           sx={{
             flexGrow: 1,
-            p: 3,
+            p: 8,
             ml:
-              !hideAppBarOnPaths.includes(location.pathname) && !isMd
-                ? `${drawerWidth}px`
+              !hideAppBarOnPaths.includes(location.pathname) && !isMdLG
+                ? drawerWidth
                 : 0,
             mr:
-              !hideAppBarOnPaths.includes(location.pathname) && !isMd
-                ? `${drawerWidth}px`
+              !hideAppBarOnPaths.includes(location.pathname) && !isMdLG
+                ? drawerWidth
                 : 0,
+            transition: "margin 0.3s ease-in-out",
           }}
         >
           <Routes>
