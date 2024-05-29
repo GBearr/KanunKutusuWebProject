@@ -35,7 +35,6 @@ export const ProposalDetail = () => {
   const observer = useRef();
   const lastCommentElementRef = useRef();
 
-  // Session storage'dan kullanıcı bilgilerini alma
   useEffect(() => {
     const storedUser = sessionStorage.getItem("currentUser");
     if (storedUser) {
@@ -47,11 +46,11 @@ export const ProposalDetail = () => {
     navigate(`/profile/${id}`);
   };
 
-  const fetchComments = async (pageNum) => {
+  const fetchComments = async (page) => {
     setLoading(true);
     try {
       const fetchedComments = await commentService.getCommentsofPost(
-        pageNum,
+        page,
         card.post.id
       );
       setComments((prevComments) => [...prevComments, ...fetchedComments]);
@@ -70,11 +69,11 @@ export const ProposalDetail = () => {
       const newComment = await commentService.insertComment(
         comment,
         card.post.id,
-        user.id // Kullanıcı kimliğini ekliyoruz
+        user.id
       );
       if (newComment) {
-        setComments((prevComments) => [newComment, ...prevComments]);
         setComment("");
+        setComments((prevComments) => [newComment, ...prevComments]);
       }
     } catch (error) {
       console.error("Yorum gönderme hatası", error);
@@ -86,12 +85,6 @@ export const ProposalDetail = () => {
       fetchComments(page);
     }
   }, [card, page]);
-
-  // useEffect(() => {
-  //   if (!card) {
-  //     navigate("/"); // Veya istediğiniz başka bir rota
-  //   }
-  // }, [card, navigate]);
 
   useEffect(() => {
     if (loading) return;
@@ -130,7 +123,7 @@ export const ProposalDetail = () => {
               {card.post.title}
             </Typography>
           }
-          subheader={card.post.date}
+          subheader={card.post.timesAgo}
         />
         {card.post.image && (
           <CardMedia component={"img"} height={194} image={card.post.image} />
@@ -141,9 +134,29 @@ export const ProposalDetail = () => {
           </Typography>
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6">Yorumlar</Typography>
+          <TextField
+            label="Yorumunuzu yazın"
+            multiline
+            rows={3}
+            value={comment}
+            fullWidth
+            sx={{ mt: 2 }}
+            variant="outlined"
+            onChange={(e) => setComment(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton aria-label="send" onClick={handleCommentSubmit}>
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           <List>
             {comments.map((comment, index) => (
               <ListItem
+                sx={{ alignItems: "center" }}
                 key={index}
                 alignItems="flex-start"
                 ref={
@@ -160,7 +173,12 @@ export const ProposalDetail = () => {
                   )}
                 </ListItemAvatar>
                 <ListItemText
-                  primary={comment.user_name}
+                  secondaryTypographyProps={{
+                    color: "black",
+                    fontSize: "17px",
+                  }}
+                  primaryTypographyProps={{ color: "gray", fontSize: "14px" }}
+                  primary={comment.formatDate}
                   secondary={comment.content}
                 />
               </ListItem>
@@ -171,25 +189,6 @@ export const ProposalDetail = () => {
               <CircularProgress />
             </Box>
           )}
-          <TextField
-            label="Yorumunuzu yazın"
-            multiline
-            rows={1}
-            value={comment}
-            fullWidth
-            sx={{ mt: 2 }}
-            variant="outlined"
-            onChange={(e) => setComment(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton aria-label="send" onClick={handleCommentSubmit}>
-                    <SendIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
         </CardContent>
       </Card>
     </Container>

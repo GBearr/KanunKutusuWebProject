@@ -72,43 +72,61 @@ export const ProfileScreen = () => {
   }
 
   return (
-    <Stack>
-      <Card sx={{ display: "flex" }}>
+    <Stack spacing={4}>
+      <Card
+        elevation={0}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          p: 2,
+          backgroundColor: "#f3f3f8",
+        }}
+      >
         {user.profileImageUrl ? (
           <CardMedia
             component="img"
             sx={{
+              ml: "9%",
+
               backgroundPosition: "center",
-              width: "40%",
+              width: 120,
+              height: 120,
+              borderRadius: "50%",
+              mr: 2,
             }}
             image={user.profileImageUrl}
+            alt={`${user.firstName} ${user.lastName}`}
           />
         ) : null}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <CardContent sx={{ flex: "1 0 auto" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
+          <CardContent>
             <Typography component="div" variant="h5">
               {user.firstName + " " + user.lastName}
             </Typography>
-            <Typography variant="h6" color="text.secondary" component="div">
+            <Typography
+              variant="subtitle1"
+              color="text.secondary"
+              component="div"
+            >
               {user.username}
             </Typography>
-            <Typography variant="h6" color="text.secondary" component="div">
-              {user.emailAddress}
+            <Typography variant="body2" color="text.secondary" component="div">
+              {user.profileDescription}
             </Typography>
           </CardContent>
         </Box>
       </Card>
-      <Box sx={{ border: "none", borderColor: "divider", mt: 2 }}>
+      <Box sx={{ border: "none", borderColor: "divider" }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
-          <Tab label="Paylaşılan Öneriler " />
+          <Tab label="Paylaşılan Öneriler" />
           <Tab label="Bekleyen Öneriler" />
           <Tab label="Onaylanan Öneriler" />
-          <Tab label="Reddedilen Önderiler" />
+          <Tab label="Reddedilen Öneriler" />
         </Tabs>
       </Box>
       <Container sx={{ mt: 4 }}>
         <Grid container justifyContent="center">
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={10}>
             <Grid container direction="column" alignItems="center" spacing={4}>
               {postOfUser.map((item) => (
                 <Grid item xs={12} key={item.id} sx={{ minWidth: "100%" }}>

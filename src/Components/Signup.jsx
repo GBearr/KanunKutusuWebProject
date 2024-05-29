@@ -73,6 +73,10 @@ export const Signup = () => {
     };
   }, []);
 
+  const onNavigate = () => {
+    window.location.href = "/login";
+  };
+
   return (
     <Box
       sx={{
@@ -237,6 +241,7 @@ export const Signup = () => {
               <Typography variant="body1">Sözleşmeyi kabul ediyorum</Typography>
             </Stack>
             <Button
+              onClick={onNavigate}
               variant="contained"
               color="primary"
               fullWidth

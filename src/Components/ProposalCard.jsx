@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -40,6 +40,12 @@ export const ProposalCard = ({ post }) => {
     }
   };
 
+  const formattedSupportCount = useMemo(() => {
+    return post.supportCount > 1000
+      ? Math.floor(post.supportCount / 1000) + "B"
+      : post.supportCount;
+  }, [post.supportCount]);
+
   return (
     <Card
       sx={{ maxWidth: "100%", border: "none", borderRadius: "16px" }}
@@ -55,11 +61,21 @@ export const ProposalCard = ({ post }) => {
           </IconButton>
         }
         title={
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography
+            sx={{
+              display: "-webkit-box",
+              overflow: "hidden",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 1,
+            }}
+            gutterBottom
+            variant="h5"
+            component="div"
+          >
             {post.title}
           </Typography>
         }
-        subheader={post.date}
+        subheader={post.timesAgo}
       />
       {post.imageUrl ? (
         <CardMedia component={"img"} height={"100%"} image={post.imageUrl} />
@@ -86,7 +102,7 @@ export const ProposalCard = ({ post }) => {
           ) : (
             <ThumbUpAltOutlinedIcon sx={{ mr: 1 }} />
           )}
-          {supportCount}
+          {formattedSupportCount}
         </Button>
         <Button color="inherit">
           <ModeCommentOutlinedIcon sx={{ mr: 1 }} />

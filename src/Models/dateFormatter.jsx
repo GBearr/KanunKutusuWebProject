@@ -68,7 +68,7 @@ class DateFormatter {
     date,
     { includeWeekday = false, includeTime = false } = {}
   ) {
-    const fDate = `${date.getDate()} ${this.formatMonth(
+    const fDate = `${date} ${this.formatMonth(
       date.getMonth() + 1
     )} ${date.getFullYear()}`;
     if (includeWeekday) {

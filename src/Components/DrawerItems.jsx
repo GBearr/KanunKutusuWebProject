@@ -10,6 +10,8 @@ import {
   createTheme,
   ThemeProvider,
   styled,
+  Icon,
+  Divider,
 } from "@mui/material";
 import {
   Home as HomeIcon,
@@ -19,6 +21,7 @@ import {
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { Link as RouterLink } from "react-router-dom";
 
 // const Item = styled(Paper)(({ theme }) => ({
@@ -37,8 +40,7 @@ const DrawerItems = ({ handleSearchDrawerToggle }) => {
       icon: <SearchIcon fontSize="large" />,
       onClick: handleSearchDrawerToggle,
     },
-    // { name: "Giriş Yap", path: "/login", icon: <MailIcon /> },
-    // { name: "Kayıt Ol", path: "/signup", icon: <MailIcon /> },
+
     {
       name: "Bekleyen Öneriler",
       path: `/proposalstate/${1}`,
@@ -58,31 +60,71 @@ const DrawerItems = ({ handleSearchDrawerToggle }) => {
     },
   ];
 
+  const handleDeleteClick = () => {
+    sessionStorage.removeItem("currentUser");
+  };
+
   return (
-    <List>
-      {drawerItems.map((item) => (
-        <ListItem
-          sx={{ marginTop: 1, height: "80px" }}
-          key={item.name}
-          disablePadding
-        >
-          <Paper
-            elevation={0}
-            sx={{ backgroundColor: "#f3f3f8", width: "100%" }}
-          >
-            <ListItemButton
-              component={RouterLink}
-              to={item.path}
-              onClick={item.onClick}
+    <List sx={{ height: "100%" }}>
+      {drawerItems.map((item, index) => (
+        <React.Fragment key={item.name}>
+          <ListItem sx={{ marginTop: 1, height: "80px" }} disablePadding>
+            <Paper
+              elevation={0}
+              sx={{ backgroundColor: "#f3f3f8", width: "100%" }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={<Typography variant="h6">{item.name}</Typography>}
-              />
-            </ListItemButton>
-          </Paper>
-        </ListItem>
+              <ListItemButton
+                component={RouterLink}
+                to={item.path}
+                onClick={item.onClick}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography
+                      sx={{
+                        fontSize: "100%",
+                      }}
+                      variant="h6"
+                    >
+                      {item.name}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </Paper>
+          </ListItem>
+          {index === 1 && <Divider />}
+          {index === 4 && <Divider />}{" "}
+        </React.Fragment>
       ))}
+      <Divider />
+      <ListItem sx={{ margin: "auto", height: "80px" }} disablePadding>
+        <Paper elevation={0} sx={{ backgroundColor: "#f3f3f8", width: "100%" }}>
+          <ListItemButton
+            onClick={handleDeleteClick}
+            component={RouterLink}
+            to="/login"
+          >
+            <ListItemIcon>
+              <ExitToAppIcon color="error" fontSize="large" />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <Typography
+                  color={"error"}
+                  sx={{
+                    fontSize: "100%",
+                  }}
+                  variant="h6"
+                >
+                  Çıkış Yap
+                </Typography>
+              }
+            />
+          </ListItemButton>
+        </Paper>
+      </ListItem>
     </List>
   );
 };

@@ -61,6 +61,10 @@ class Post {
       state: this.state,
     };
   }
+
+  getDate() {
+    return DateFormatter.formatDate(this.createdAt);
+  }
 }
 
 export default Post;

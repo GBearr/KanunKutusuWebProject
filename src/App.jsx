@@ -12,6 +12,8 @@ import {
   Toolbar,
   Card,
   CardHeader,
+  Divider,
+  createTheme,
 } from "@mui/material";
 import { Signup } from "./Components/Signup";
 import { Login } from "./Components/Login";
@@ -24,25 +26,41 @@ import SearchDrawer from "./Components/SearchDrawer";
 import AppBar from "./Components/AppBar";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { ProposalState } from "./Components/ProposalState";
-import { postService } from "./services/PostService"; // Yeni import
-import { userService } from "./services/UserService"; // Yeni import
+import { postService } from "./services/PostService";
+import { userService } from "./services/UserService";
 import ErrorBoundary from "./Components/ErrorBoundary";
+import AdminLogin from "./Components/AdminLogin";
+import AdminPanel from "./Components/AdminPanel";
+import logo from "../src/assets/logo.svg";
 
-const drawerWidth = 240;
+const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      mdlg: 1100,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const hideAppBarOnPaths = ["/login", "/signup"];
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const hideAppBarOnPaths = ["/login", "/signup", "/adminlogin", "/adminpanel"];
+  const isMd = useMediaQuery(theme.breakpoints.down("md"));
+  const isMdLG = useMediaQuery(theme.breakpoints.down("mdlg"));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState(null);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
-  const searchTimeoutRef = useRef(null); // Ref to store the timeout ID
+  const searchTimeoutRef = useRef(null);
+  console.log(isMd);
+  const drawerWidth = isMd ? 240 : 340;
 
   document.body.style.backgroundColor = "#f3f3f8";
 
@@ -81,7 +99,7 @@ function App() {
       }
 
       searchTimeoutRef.current = setTimeout(async () => {
-        if (query.trim() !== "") {
+        if (query && query.trim() !== "") {
           const postResults = await postService.searchPosts(user.id, query);
           const userResults = await userService.searchUsers(query);
           const combinedResults = [
@@ -104,14 +122,12 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="App">
-        {!hideAppBarOnPaths.includes(location.pathname) && (
-          <AppBar handleDrawerToggle={handleDrawerToggle} />
-        )}
+        {isMdLG && <AppBar handleDrawerToggle={handleDrawerToggle} />}
 
         {!hideAppBarOnPaths.includes(location.pathname) && (
           <Drawer
-            variant={isMobile ? "temporary" : "permanent"}
-            open={isMobile ? mobileOpen : true}
+            variant={isMd ? "temporary" : "permanent"}
+            open={isMd ? mobileOpen : true}
             onClose={handleDrawerToggle}
             ModalProps={{
               keepMounted: true,
@@ -120,27 +136,24 @@ function App() {
               display: { xs: "block", sm: "block" },
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
-                width: isMobile ? drawerWidth : "20vw",
+                width: drawerWidth,
                 backgroundColor: "#f3f3f8",
                 backdropFilter: "blur(5px)",
                 color: "black",
-                borderRight: "1px solid #f3f3f8",
               },
             }}
           >
             <Toolbar />
-            <Typography variant="h4" marginBottom={2} textAlign="center">
-              KANUN KUTUSU
-            </Typography>
-
+            <img style={{ alignSelf: "center", width: "50%" }} src={logo} />
+            <Divider sx={{ mt: 2 }} />
             <DrawerItems handleSearchDrawerToggle={handleSearchDrawerToggle} />
           </Drawer>
         )}
 
-        {user && (
+        {user && !hideAppBarOnPaths.includes(location.pathname) && (
           <Drawer
             anchor="right"
-            variant={isMobile ? "temporary" : "permanent"}
+            variant={isMd ? "temporary" : "permanent"}
             open={rightDrawerOpen}
             onClose={handleRightDrawerToggle}
             ModalProps={{
@@ -150,7 +163,7 @@ function App() {
               display: { xs: "block", sm: "block" },
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
-                width: isMobile ? drawerWidth : "20vw",
+                width: drawerWidth,
                 backgroundColor: "#f3f3f8",
                 backdropFilter: "blur(5px)",
                 color: "black",
@@ -161,7 +174,12 @@ function App() {
             <Toolbar />
             <Stack
               direction={"column"}
-              sx={{ justifyContent: "flex-end", alignItems: "center", mb: 2 }}
+              sx={{
+                marginRight: "10%",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                mb: 2,
+              }}
             >
               <Button
                 fullWidth
@@ -175,6 +193,7 @@ function App() {
                 variant="outlined"
                 onClick={handleProfileClick}
                 sx={{
+                  borderRadius: "16px",
                   cursor: "pointer",
                   textAlign: "center",
                   border: "none",
@@ -184,6 +203,7 @@ function App() {
                   <Avatar
                     sx={{
                       mt: 2,
+                      borderRadius: "50%",
                       width: { xs: 100, sm: 150, md: 200 },
                       height: { xs: 100, sm: 150, md: 200 },
                     }}
@@ -191,9 +211,14 @@ function App() {
                   />
                   <CardHeader
                     subheader={
-                      <Typography sx={{ mt: 2 }} variant="h5" marginBottom={1}>
-                        {user.first_name + " " + user.last_name}
-                      </Typography>
+                      <>
+                        <Typography sx={{ mt: 2, color: "black" }} variant="h5">
+                          {user.first_name + " " + user.last_name}
+                        </Typography>
+                        <Typography variant="subtitle1">
+                          {user.profile_description}
+                        </Typography>
+                      </>
                     }
                   />
                 </Stack>
@@ -216,12 +241,12 @@ function App() {
             flexGrow: 1,
             p: 3,
             ml:
-              !hideAppBarOnPaths.includes(location.pathname) && !isMobile
-                ? "20vw"
+              !hideAppBarOnPaths.includes(location.pathname) && !isMd
+                ? `${drawerWidth}px`
                 : 0,
             mr:
-              !hideAppBarOnPaths.includes(location.pathname) && !isMobile
-                ? "20vw"
+              !hideAppBarOnPaths.includes(location.pathname) && !isMd
+                ? `${drawerWidth}px`
                 : 0,
           }}
         >
@@ -236,6 +261,11 @@ function App() {
             <Route path="/carddetail/:id" element={<ProposalDetail />} />
             <Route path="/proposalcreate" element={<ProposalCreate />} />
             <Route path="/proposalstate/:id" element={<ProposalState />} />
+            <Route
+              path="/adminlogin"
+              element={<AdminLogin handleLogin={handleLogin} />}
+            />
+            <Route path="/adminpanel" element={<AdminPanel />} />
           </Routes>
         </Box>
       </div>

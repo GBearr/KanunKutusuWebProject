@@ -34,28 +34,6 @@ export const authService = {
     return User.fromJSON(data[0]);
   },
 
-  // signUp: async (
-  //   p_email_address,
-  //   p_first_name,
-  //   p_last_name,
-  //   p_password,
-  //   p_username
-  // ) => {
-  //   let { data, error } = await supabase.rpc("sign_up", {
-  //     p_email_address,
-  //     p_first_name,
-  //     p_last_name,
-  //     p_password,
-  //     p_username,
-  //   });
-  //   if (error) {
-  //     console.error(error);
-  //     return null;
-  //   } else {
-  //     console.log("User sign up:", data);
-  //   }
-  // },
-
   signUp: async (signUpData) => {
     const {
       p_email_address,
