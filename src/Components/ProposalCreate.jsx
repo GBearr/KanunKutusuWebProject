@@ -6,6 +6,7 @@ import {
   Stack,
   Button,
   IconButton,
+  Container,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { createPostSchema } from "../schemas";
@@ -32,7 +33,7 @@ export const ProposalCreate = () => {
         p_user_id: user.id,
         p_title: values.title,
         p_content: values.content,
-        p_image_url: values.imageUrl,
+        file: values.imageUrl,
       });
     } catch (error) {
       console.error("Error creating post:", error);
@@ -79,7 +80,6 @@ export const ProposalCreate = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
         maxWidth: "800px",
         margin: "0 auto",
         padding: "2rem",
@@ -98,9 +98,6 @@ export const ProposalCreate = () => {
           boxShadow: 3,
         }}
       >
-        <Typography variant="h4" textAlign={"center"}>
-          KANUN KUTUSU
-        </Typography>
         <input
           accept="image/*"
           style={{ display: "none" }}
@@ -109,9 +106,16 @@ export const ProposalCreate = () => {
           onChange={handleImageChange}
         />
         <label htmlFor="image-upload-input">
-          <Button
-            sx={{ maxWidth: "500", maxHeight: "500" }}
-            color={imagePreview ? "inherit" : "primary"}
+          <Container
+            sx={{
+              p: 4,
+              width: "100%",
+              borderRadius: "16px",
+              alignItems: "center",
+              objectFit: "cover",
+              cursor: "pointer",
+              backgroundColor: imagePreview ? "inherit" : "#1870cc",
+            }}
             variant="contained"
             onClick={handleUploadClick}
             fullWidth
@@ -142,9 +146,18 @@ export const ProposalCreate = () => {
                 />
               </Box>
             ) : (
-              <AddCircleIcon />
+              <Box
+                sx={{
+                  margin: "0 auto",
+                  padding: "2rem",
+                }}
+              >
+                <Typography textAlign={"center"}>
+                  Resim Yüklemek İçin Tıklayınız
+                </Typography>
+              </Box>
             )}
-          </Button>
+          </Container>
         </label>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
           <Stack spacing={3} width="100%">

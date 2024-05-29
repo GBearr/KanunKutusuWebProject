@@ -107,6 +107,8 @@ export const ProposalDetail = () => {
     );
   }
 
+  console.log("Proposal Detail", card.post.imageUrl);
+
   return (
     <Container>
       <Card sx={{ maxWidth: "100%", mt: 4 }}>
@@ -125,8 +127,12 @@ export const ProposalDetail = () => {
           }
           subheader={card.post.timesAgo}
         />
-        {card.post.image && (
-          <CardMedia component={"img"} height={194} image={card.post.image} />
+        {card.post.imageUrl && (
+          <CardMedia
+            component={"img"}
+            sx={{ width: "100%", height: "auto", objectFit: "cover" }}
+            image={card.post.imageUrl}
+          />
         )}
         <CardContent>
           <Typography variant="body1" color="text.secondary">

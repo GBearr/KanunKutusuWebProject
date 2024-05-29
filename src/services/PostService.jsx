@@ -1,5 +1,6 @@
 import supabase from "./supabaseClient";
 import Post from "../Models/postModel";
+import { v4 as uuidv4 } from "uuid";
 
 export const postService = {
   getNewPosts: async (p_page, p_viewer_id) => {
@@ -123,7 +124,8 @@ export const postService = {
     }
   },
 
-  createPost: async ({ p_user_id, p_title, p_content, p_image_url }) => {
+  createPost: async ({ p_user_id, p_title, p_content, file }) => {
+    let p_image_url = await postService.uploadPostImage(file);
     let { data, error } = await supabase.rpc("insert_post", {
       p_user_id,
       p_title,
@@ -162,6 +164,23 @@ export const postService = {
     } else {
       console.log(data);
       return data;
+    }
+  },
+  uploadPostImage: async (file) => {
+    const bucketName = "post-images";
+    const fileExtension = file.name.split(".").pop();
+    const fileName = uuidv4() + "." + fileExtension;
+    console.log("File Name:", fileName);
+    await supabase.storage.from(bucketName).upload(fileName, file);
+    let { data, error } = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(fileName);
+    if (error) {
+      console.error(error);
+      return [];
+    } else {
+      console.log(data);
+      return data.publicUrl;
     }
   },
 };

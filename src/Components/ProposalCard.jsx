@@ -78,7 +78,11 @@ export const ProposalCard = ({ post }) => {
         subheader={post.timesAgo}
       />
       {post.imageUrl ? (
-        <CardMedia component={"img"} height={"100%"} image={post.imageUrl} />
+        <CardMedia
+          component={"img"}
+          style={{ width: "100%", height: "auto", objectFit: "cover" }}
+          image={post.imageUrl}
+        />
       ) : null}
 
       <CardContent onClick={handleClick}>
